@@ -138,7 +138,7 @@ class YoutubeCache:
         related_videos = rel.fetch_related_videos(video_id, source)
         return { "related_videos": related_videos }
 
-    def fetch_uploaded_videos(self, channel_id, refresh);
+    def fetch_uploaded_videos(self, channel_id, refresh):
         uploads = self._api.uploaded_videos(channel_id)
         payload = {
             "timestamp": datet, time.now().isoformat(),
