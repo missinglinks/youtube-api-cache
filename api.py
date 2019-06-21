@@ -55,8 +55,8 @@ class Playlist(Resource):
 
 class Uploads(Resource):
     def get(self, channel_id):
-        refresh = requests.args.get('refresh')
-        sort = requests.args.get('sort')
+        refresh = request.args.get('refresh')
+        sort = request.args.get('sort')
         if not sort:
             sort = 'date'
         return { 'foo': 'bar' }
@@ -76,4 +76,5 @@ yac.add_resource(Playlist, '/playlist/<string:playlist_id>')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)
+
