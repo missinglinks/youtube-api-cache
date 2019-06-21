@@ -74,3 +74,25 @@ class YouTubeApi:
             else:
                 break 
         return  [ x["id"]["videoId"] for x in related_videos ] 
+
+    def uploaded_videos(self, channel_id):
+        uploads = self.channel_data(channel_id)["contentDetails"]["relatedPlaylists"]["uploads"]
+        video_ids = []
+        next_page = None
+        while True:
+
+            cmd = self._yt.playlistItems().list(
+                playlistId=uploads,
+                part="snippet,status",
+                maxResults=50,
+                pageToken=next_page
+            )
+            playlist_page = youtube_api_call(cmd)
+
+            video_ids += [ x["snippet"]["resourceId"]["videoId"] for x in playlist_page["items"] ]
+            
+            if "nextPageToken" in playlist_page:
+                next_page = playlist_page["nextPageToken"]
+            else:
+                break
+        return video_ids

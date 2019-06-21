@@ -54,7 +54,7 @@ class Playlist(Resource):
         return { 'foo': 'bar' }
 
 class Uploads(Resource):
-    def get(self, video_id):
+    def get(self, channel_id):
         refresh = requests.args.get('refresh')
         sort = requests.args.get('sort')
         if not sort:
