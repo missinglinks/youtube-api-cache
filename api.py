@@ -59,7 +59,7 @@ class Uploads(Resource):
         sort = request.args.get('sort')
         if not sort:
             sort = 'date'
-        return { 'foo': 'bar' }
+        return CACHE.fetch_uploaded_videos(channel_id, refresh)
 
 
 # helpers
