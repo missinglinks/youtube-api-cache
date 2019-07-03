@@ -61,9 +61,15 @@ class Uploads(Resource):
             sort = 'date'
         return CACHE.fetch_uploaded_videos(channel_id, refresh)
 
+class Search(Resource):
+    def get(self):
+        q = request.args.get('q')
+        if q:
+            return CACHE.search_videos(q)
 
 # helpers
 yac.add_resource(SlugConvert, '/channelId')
+yac.add_resource(Search, '/search')
 # channel endpoints
 yac.add_resource(ChannelData, '/channel/<string:channel_id>')
 yac.add_resource(RelatedChannels, '/channel/<string:channel_id>/related')

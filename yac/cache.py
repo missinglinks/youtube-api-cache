@@ -146,3 +146,12 @@ class YoutubeCache:
             "uploads": uploads
         }
         return payload
+
+    def search_videos(self, q):
+        videos = self._api.search_videos(q)
+        payload = {
+            'timestamp': atetime.now().isoformat(),
+            'q': q,
+            'videos': videos
+        }
+        return payload

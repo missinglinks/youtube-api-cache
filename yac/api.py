@@ -97,3 +97,18 @@ class YouTubeApi:
                 break
             break
         return video_ids
+
+    def search_videos(self, q, n=50):
+        """
+        Return a list of first :n: videos in the search results for search term :q:
+        """
+
+        results = self.yt.search().list(
+            part="id,snippet",
+            q=q,
+            maxResults=n
+        ).execute()
+
+        #videos = [ x for x in results["items"] if "videoId" in x["id"] ]]
+
+        return results
