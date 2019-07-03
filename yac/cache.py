@@ -141,7 +141,8 @@ class YoutubeCache:
     def fetch_uploaded_videos(self, channel_id, refresh):
         uploads = self._api.uploaded_videos(channel_id)
         payload = {
-            "timestamp": time.now().isoformat(),
+            "timestamp": datetime.now().isoformat(),
             "channel_id": channel_id,
             "uploads": uploads
         }
+        return payload

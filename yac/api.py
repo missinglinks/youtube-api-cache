@@ -87,12 +87,13 @@ class YouTubeApi:
                 maxResults=50,
                 pageToken=next_page
             )
-            playlist_page = youtube_api_call(cmd)
+            playlist_page = cmd.execute()
 
-            video_ids += [ x["snippet"]["resourceId"]["videoId"] for x in playlist_page["items"] ]
+            video_ids += [ x for x in playlist_page["items"] ]
             
             if "nextPageToken" in playlist_page:
                 next_page = playlist_page["nextPageToken"]
             else:
                 break
+            break
         return video_ids

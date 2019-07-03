@@ -27,9 +27,12 @@ class VideoRelations:
         """
         related_videos = []
 
-        rsp = requests.get(self.YOUTUBE_VIDEO.format(video_id="8GTEHJAZvjI"))
+        rsp = requests.get(self.YOUTUBE_VIDEO.format(video_id=video_id))
         soup = BeautifulSoup(rsp.text, "html.parser")
         button = soup.find("button", {"id": "watch-more-related-button"})
+        if not button:
+            return related_videos
+        
         token = button["data-continuation"]
 
         for li in soup.find_all("li", {"class":"related-list-item"}):
