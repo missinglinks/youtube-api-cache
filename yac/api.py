@@ -103,7 +103,7 @@ class YouTubeApi:
         Return a list of first :n: videos in the search results for search term :q:
         """
 
-        results = self.yt.search().list(
+        results = self._yt.search().list(
             part="id,snippet",
             q=q,
             maxResults=n
@@ -111,4 +111,4 @@ class YouTubeApi:
 
         #videos = [ x for x in results["items"] if "videoId" in x["id"] ]]
 
-        return results
+        return results["items"]

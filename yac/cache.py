@@ -150,7 +150,7 @@ class YoutubeCache:
     def search_videos(self, q):
         videos = self._api.search_videos(q)
         payload = {
-            'timestamp': atetime.now().isoformat(),
+            'timestamp': datetime.now().isoformat(),
             'q': q,
             'videos': videos
         }
