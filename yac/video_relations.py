@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from requests.exceptions import ProxyError
 import requests
 import time
+import re
 
 class VideoRelations:
 
@@ -20,25 +21,94 @@ class VideoRelations:
         self.api = api
         self.proxy = proxy
 
+    def _normalize_name(self, name):
+        split = "\\&*\"({[]})./!+?"
+        for c in split:
+            if name.find(c) == 0:
+                name = name[1:]
+            
+            name = name.split(c)[0]
+        return name
+
+    def _parse_channel_id(self, html, channel_name):
+        print(channel_name)
+        #name = self._normalize_name(channel_name)
+        #name = re.escape(channel_name)
+        name = self._normalize_name(channel_name)
+        print(name)
+        res = s = re.search(
+            r'text\\":\\".?.?{}.*?browseId\\":\\"(.*?)\\"'.format(name),
+            html)
+        channel_id = res.group(1)
+        return channel_id
+
 
     def _from_frontend(self, video_id):
         """
         Retrieve recommendend videos from frontend (40 videos)
         """
         related_videos = []
-
-        rsp = requests.get(self.YOUTUBE_VIDEO.format(video_id=video_id))
+            
+        print(video_id)    
+        while True:
+            try:
+                rsp = requests.get(self.YOUTUBE_VIDEO.format(video_id=video_id))
+                break
+            except:
+                print("retry ...")
+                time.sleep(2)
+                continue
+            
+        html_text = rsp.text
         soup = BeautifulSoup(rsp.text, "html.parser")
-        button = soup.find("button", {"id": "watch-more-related-button"})
-        if not button:
-            return related_videos
         
-        token = button["data-continuation"]
-
         for li in soup.find_all("li", {"class":"related-list-item"}):
             link = li.find("a")["href"]
             video_id = link.split("=")[-1].split("&")[0]
-            related_videos.append(video_id)
+
+            if len(video_id) != 11:
+                continue
+
+            info = li.find("a")
+
+            title = info.find("span", {"class": "title"}).text.strip()
+
+            try:
+                channel = li.find("span", {"class": "stat attribution"}).text.strip()
+            except:
+                print("NO CHANNEL!\n")
+                continue
+            #channel = info.find("span", {"class": "stat attribution"}).text.strip()
+
+            try:
+                count = info.find("span", {"class": "stat view-count"}).text.strip()
+            except:
+                print("count parse error")
+                print(info)
+                count = ""
+
+            if "Recommended" in count:
+                continue
+
+            channel_id = self._parse_channel_id(html_text, channel)
+
+            related_videos.append(
+                {
+                    "video_id": video_id,
+                    "title": title,
+                    "channel": channel,
+                    "channel_id": channel_id,
+                    "count": count
+                })
+
+        button = soup.find("button", {"id": "watch-more-related-button"})
+        with open("tmp.txt", "w") as f:
+            f.write(rsp.text)
+
+        if not button:
+            print("no related button")
+            return related_videos        
+        token = button["data-continuation"]
 
         rsp = requests.get(self.YOUTUBE_MORE_VIDEOS.format(token=token))
         data = rsp.json()

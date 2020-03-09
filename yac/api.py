@@ -95,6 +95,7 @@ class YouTubeApi:
                 next_page = playlist_page["nextPageToken"]
             else:
                 break
+
             break
         return video_ids
 
