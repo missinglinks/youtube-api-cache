@@ -37,7 +37,7 @@ class VideoRelations:
         name = self._normalize_name(channel_name)
         print(name)
         res = s = re.search(
-            r'text\\":\\".?.?{}.*?browseId\\":\\"(.*?)\\"'.format(name),
+            r'text\\":\\".?.?.?.?.?.?.?.?{}.*?browseId\\":\\"(.*?)\\"'.format(name),
             html)
         channel_id = res.group(1)
         return channel_id
